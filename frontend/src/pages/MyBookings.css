@@ -1,0 +1,115 @@
+.my-bookings {
+  padding: 32px 0;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-item {
+  display: flex;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.booking-image {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.booking-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.booking-info {
+  flex: 1;
+  padding: 16px 20px;
+}
+
+.booking-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.booking-hotel {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.booking-hotel:hover { color: var(--primary); }
+
+.booking-room {
+  font-size: 14px;
+  color: var(--primary);
+  margin-top: 2px;
+}
+
+.booking-loc {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.booking-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.booking-dates svg { color: var(--primary); }
+
+.booking-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-form {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+@media (max-width: 768px) {
+  .booking-item { flex-direction: column; }
+  .booking-image { width: 100%; height: 180px; }
+  .booking-top { flex-direction: column; gap: 8px; }
+}
