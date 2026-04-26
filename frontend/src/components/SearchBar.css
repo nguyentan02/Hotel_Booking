@@ -1,29 +1,64 @@
 .search-bar {
   display: flex;
   background: var(--bg-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
+  border-radius: 28px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border);
+  position: relative;
+  align-items: stretch;
+}
+
+.search-bar-compact {
+  border-radius: 16px;
 }
 
 .search-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 20px;
+  border-right: 1px solid var(--border);
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.search-field-location {
+  flex: 1.5;
+}
+
+.search-field-dates {
+  flex: 1.3;
+}
+
+.search-field-guests {
+  flex: 1;
+  border-right: none;
+}
+
+.search-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.search-field-input {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 16px 20px;
-  border-right: 1px solid var(--border);
-  flex: 1;
 }
 
 .search-icon {
-  color: var(--primary);
-  font-size: 16px;
+  color: var(--text-light);
+  font-size: 14px;
   flex-shrink: 0;
 }
 
-.search-field select,
-.search-field input {
+.search-field-input input,
+.search-field-input select {
   border: none;
   background: transparent;
   font-size: 14px;
@@ -31,31 +66,203 @@
   width: 100%;
   font-family: var(--font);
   outline: none;
+  padding: 0;
 }
 
-.search-field select {
-  appearance: none;
+.search-field-input input::placeholder {
+  color: var(--text-light);
+}
+
+.search-dates-row {
+  gap: 4px;
+}
+
+.date-separator {
+  color: var(--text-light);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.guest-trigger {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--text);
   cursor: pointer;
+  font-family: var(--font);
+  padding: 0;
+  text-align: left;
+  width: 100%;
 }
 
-.search-btn {
-  border-radius: 0;
-  padding: 16px 32px;
+/* Search submit button - Trivago blue */
+.search-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0 28px 28px 0;
+  padding: 0 32px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.2s;
   white-space: nowrap;
+  min-width: 100px;
+}
+
+.search-submit-btn:hover {
+  background: var(--primary-dark);
+}
+
+.search-submit-icon {
+  font-size: 16px;
+}
+
+/* Dropdowns */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 8px;
+  animation: searchDropFade 0.15s ease;
+}
+
+@keyframes searchDropFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 8px 12px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-family: var(--font);
+  text-align: left;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.dropdown-item:hover {
+  background: var(--bg-secondary);
+}
+
+.dropdown-item-icon {
+  color: var(--primary);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.dropdown-item-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dropdown-item-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.dropdown-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Guest dropdown */
+.guest-dropdown {
+  min-width: 240px;
+  padding: 16px;
+}
+
+.guest-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.guest-row span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.guest-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guest-controls button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.guest-controls button:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.guest-controls > span {
+  min-width: 20px;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
   .search-bar {
     flex-direction: column;
-    border-radius: var(--radius-lg);
+    border-radius: 16px;
   }
   .search-field {
     border-right: none;
     border-bottom: 1px solid var(--border);
     padding: 12px 16px;
   }
-  .search-btn {
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  .search-field-guests {
+    border-bottom: none;
+  }
+  .search-submit-btn {
+    border-radius: 0 0 16px 16px;
     padding: 14px;
   }
 }

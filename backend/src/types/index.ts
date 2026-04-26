@@ -6,7 +6,7 @@ export interface AuthUser {
   email: string;
   phone: string | null;
   role: string;
-  avatarUrl: string | null;
+  avatar_url: string | null;
 }
 
 export interface AuthRequest extends Request {

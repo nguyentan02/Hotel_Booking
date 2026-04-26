@@ -20,11 +20,17 @@ export class ReviewService {
 
   async getByHotel(hotelId: number) {
     const reviews = await reviewRepository.findByHotel(hotelId);
-    return reviews.map((r) => ({
-      ...r,
-      user_name: r.user.name,
-      avatar_url: r.user.avatarUrl,
-    }));
+    return reviews.map((r) => {
+      const { userId, hotelId: hId, createdAt, user, ...rest } = r;
+      return {
+        ...rest,
+        user_id: userId,
+        hotel_id: hId,
+        created_at: createdAt,
+        user_name: user.name,
+        avatar_url: user.avatarUrl,
+      };
+    });
   }
 
   async delete(id: number, userId: number, role: string) {

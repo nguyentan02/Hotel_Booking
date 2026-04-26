@@ -7,10 +7,12 @@ export class UserRepository {
   }
 
   async findByIdSelect(id: number) {
-    return prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id },
       select: { id: true, name: true, email: true, phone: true, role: true, avatarUrl: true },
     });
+    if (!user) return null;
+    return { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, avatar_url: user.avatarUrl };
   }
 
   async findByEmail(email: string) {
@@ -30,10 +32,18 @@ export class UserRepository {
   }
 
   async findAll() {
-    return prisma.user.findMany({
+    const users = await prisma.user.findMany({
       select: { id: true, name: true, email: true, phone: true, role: true, createdAt: true },
       orderBy: { createdAt: 'desc' },
     });
+    return users.map((u) => ({
+      id: u.id,
+      full_name: u.name,
+      email: u.email,
+      phone: u.phone,
+      role: u.role,
+      created_at: u.createdAt,
+    }));
   }
 
   async updateRole(id: number, role: string) {

@@ -1,34 +1,72 @@
 .hero {
-  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #0a1628 0%, #1a365d 50%, #2b6cb0 100%);
   padding: 80px 0 60px;
   color: white;
-  margin-top: -70px;
-  padding-top: 150px;
+  margin-top: -72px;
+  padding-top: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at 70% 20%, rgba(66, 153, 225, 0.15) 0%, transparent 60%);
+}
+
+.hero .container {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-content {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 
 .hero-content h1 {
-  font-size: 42px;
+  font-size: 40px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   line-height: 1.2;
+  letter-spacing: -0.5px;
 }
 
-.hero-content h1 span {
-  color: #fbbf24;
+.hero-content .highlight {
+  color: #f6ad55;
+  font-weight: 800;
 }
 
-.hero-content p {
-  font-size: 18px;
-  opacity: 0.9;
+.hero-sub {
+  font-size: 17px;
+  opacity: 0.85;
+  font-weight: 400;
 }
 
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.hero-badge {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+/* Sections */
 .section {
   padding: 60px 0;
+}
+
+.section-featured {
+  background: var(--bg-secondary);
 }
 
 .section-header {
@@ -39,8 +77,9 @@
 }
 
 .section-header h2 {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
+  color: var(--text);
 }
 
 .text-center {
@@ -49,14 +88,22 @@
 }
 
 .see-all {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   color: var(--primary);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 24px;
+  transition: all 0.2s;
 }
 
+.see-all:hover {
+  background: var(--primary-light);
+}
+
+/* City cards */
 .city-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -66,37 +113,75 @@
 .city-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 14px;
+  padding: 18px 20px;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 14px;
   color: var(--text);
   transition: all 0.2s;
 }
 
 .city-card:hover {
   border-color: var(--primary);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
 }
 
-.city-card svg {
+.city-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--primary);
-  font-size: 20px;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
-.city-card strong {
+.dark .city-card-icon {
+  background: rgba(0, 127, 175, 0.15);
+}
+
+.city-card-info {
+  flex: 1;
+}
+
+.city-card-info strong {
   display: block;
   font-size: 15px;
+  font-weight: 600;
 }
 
-.city-card span {
+.city-card-info span {
   font-size: 13px;
   color: var(--text-secondary);
 }
 
+.city-card-arrow {
+  color: var(--text-light);
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+
+.city-card:hover .city-card-arrow {
+  transform: translateX(4px);
+  color: var(--primary);
+}
+
+/* Hotel grid */
+.hotel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Why section */
 .why-section {
-  background: var(--bg-secondary);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
 }
 
 .why-grid {
@@ -107,16 +192,50 @@
 
 .why-card {
   text-align: center;
-  padding: 32px 20px;
+  padding: 36px 24px;
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.why-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-4px);
 }
 
 .why-icon {
-  font-size: 40px;
-  margin-bottom: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 16px;
 }
+
+.why-icon-blue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.why-icon-green {
+  background: #d1fae5;
+  color: #059669;
+}
+.why-icon-orange {
+  background: #ffedd5;
+  color: #ea580c;
+}
+.why-icon-purple {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.dark .why-icon-blue { background: rgba(37, 99, 235, 0.15); }
+.dark .why-icon-green { background: rgba(5, 150, 105, 0.15); }
+.dark .why-icon-orange { background: rgba(234, 88, 12, 0.15); }
+.dark .why-icon-purple { background: rgba(124, 58, 237, 0.15); }
 
 .why-card h3 {
   font-size: 16px;
@@ -127,18 +246,22 @@
 .why-card p {
   font-size: 14px;
   color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 @media (max-width: 768px) {
   .hero-content h1 { font-size: 28px; }
-  .hero-content p { font-size: 15px; }
+  .hero-sub { font-size: 15px; }
   .hero { padding-top: 120px; padding-bottom: 40px; }
+  .hero-badges { flex-direction: column; gap: 8px; align-items: center; }
   .city-grid { grid-template-columns: repeat(2, 1fr); }
+  .hotel-grid { grid-template-columns: repeat(2, 1fr); }
   .why-grid { grid-template-columns: repeat(2, 1fr); }
   .section { padding: 40px 0; }
 }
 
 @media (max-width: 480px) {
   .city-grid { grid-template-columns: 1fr; }
+  .hotel-grid { grid-template-columns: 1fr; }
   .why-grid { grid-template-columns: 1fr; }
 }

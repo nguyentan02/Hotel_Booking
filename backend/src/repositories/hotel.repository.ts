@@ -76,9 +76,14 @@ export class HotelRepository {
 
     const mapped = hotels.map((h) => {
       const prices = h.rooms.map((r) => Number(r.price));
-      const { rooms, _count, ...rest } = h;
+      const { rooms, _count, starRating, imageUrl, isFeatured, createdAt, updatedAt, ...rest } = h;
       return {
         ...rest,
+        star_rating: starRating,
+        image_url: imageUrl,
+        is_featured: isFeatured,
+        created_at: createdAt,
+        updated_at: updatedAt,
         min_price: prices.length > 0 ? Math.min(...prices) : null,
         review_count: _count.reviews,
       };
@@ -100,8 +105,17 @@ export class HotelRepository {
 
     return hotels.map((h) => {
       const prices = h.rooms.map((r) => Number(r.price));
-      const { rooms, _count, ...rest } = h;
-      return { ...rest, min_price: prices.length > 0 ? Math.min(...prices) : null, review_count: _count.reviews };
+      const { rooms, _count, starRating, imageUrl, isFeatured, createdAt, updatedAt, ...rest } = h;
+      return {
+        ...rest,
+        star_rating: starRating,
+        image_url: imageUrl,
+        is_featured: isFeatured,
+        created_at: createdAt,
+        updated_at: updatedAt,
+        min_price: prices.length > 0 ? Math.min(...prices) : null,
+        review_count: _count.reviews,
+      };
     });
   }
 

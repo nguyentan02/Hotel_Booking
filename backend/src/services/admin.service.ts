@@ -19,15 +19,15 @@ export class AdminService {
       city: data.city,
       latitude: data.latitude || null,
       longitude: data.longitude || null,
-      starRating: data.star_rating || 3,
+      starRating: parseInt(data.star_rating) || 3,
       imageUrl,
       phone: data.phone || null,
       email: data.email || null,
-      isFeatured: data.is_featured || false,
+      isFeatured: data.is_featured === true || data.is_featured === 'true',
     });
 
     if (data.amenity_ids) {
-      const ids: number[] = JSON.parse(data.amenity_ids);
+      const ids: number[] = typeof data.amenity_ids === 'string' ? JSON.parse(data.amenity_ids) : data.amenity_ids;
       await hotelRepository.setAmenities(hotel.id, ids);
     }
 
@@ -47,18 +47,21 @@ export class AdminService {
     if (data.city) updateData.city = data.city;
     if (data.latitude !== undefined) updateData.latitude = data.latitude;
     if (data.longitude !== undefined) updateData.longitude = data.longitude;
-    if (data.star_rating) updateData.starRating = data.star_rating;
+    if (data.star_rating) {
+      const sr = parseInt(data.star_rating);
+      if (!isNaN(sr)) updateData.starRating = sr;
+    }
     if (imageUrl) updateData.imageUrl = imageUrl;
     if (data.phone !== undefined) updateData.phone = data.phone;
     if (data.email !== undefined) updateData.email = data.email;
-    if (data.is_featured !== undefined) updateData.isFeatured = data.is_featured;
+    if (data.is_featured !== undefined) updateData.isFeatured = data.is_featured === true || data.is_featured === 'true';
 
     if (Object.keys(updateData).length > 0) {
       await hotelRepository.update(id, updateData);
     }
 
     if (data.amenity_ids) {
-      const ids: number[] = JSON.parse(data.amenity_ids);
+      const ids: number[] = typeof data.amenity_ids === 'string' ? JSON.parse(data.amenity_ids) : data.amenity_ids;
       await hotelRepository.setAmenities(id, ids);
     }
   }
@@ -74,12 +77,12 @@ export class AdminService {
       imageUrl = await uploadToCloudinary(imageFile, 'rooms');
     }
     return roomRepository.create({
-      hotelId: data.hotel_id,
+      hotelId: parseInt(data.hotel_id),
       name: data.name,
       description: data.description || null,
-      price: data.price,
-      capacity: data.capacity || 2,
-      totalRooms: data.total_rooms || 1,
+      price: parseFloat(data.price),
+      capacity: parseInt(data.capacity) || 2,
+      totalRooms: parseInt(data.total_rooms) || 1,
       imageUrl,
     });
   }
@@ -93,9 +96,9 @@ export class AdminService {
 
     if (data.name) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
-    if (data.price) updateData.price = data.price;
-    if (data.capacity) updateData.capacity = data.capacity;
-    if (data.total_rooms) updateData.totalRooms = data.total_rooms;
+    if (data.price) updateData.price = parseFloat(data.price);
+    if (data.capacity) updateData.capacity = parseInt(data.capacity);
+    if (data.total_rooms) updateData.totalRooms = parseInt(data.total_rooms);
     if (data.status) updateData.status = data.status;
     if (imageUrl) updateData.imageUrl = imageUrl;
 
@@ -112,14 +115,31 @@ export class AdminService {
   async getAllBookings(status?: string, page = 1, limit = 20) {
     const { bookings, total } = await bookingRepository.findAll(status, page, limit);
 
-    const mapped = bookings.map((b) => ({
-      ...b,
-      room_name: b.room.name,
-      hotel_name: b.room.hotel.name,
-      city: b.room.hotel.city,
-      user_name: b.user?.name || null,
-      user_email: b.user?.email || null,
-    }));
+    const mapped = bookings.map((b) => {
+      const { userId, roomId, checkIn, checkOut, numRooms, totalPrice, guestName, guestEmail, guestPhone, paymentMethod, paymentStatus, specialRequests, createdAt, updatedAt, room, user, ...rest } = b;
+      return {
+        ...rest,
+        user_id: userId,
+        room_id: roomId,
+        check_in_date: checkIn,
+        check_out_date: checkOut,
+        num_rooms: numRooms,
+        total_price: Number(totalPrice),
+        guest_name: guestName,
+        guest_email: guestEmail,
+        guest_phone: guestPhone,
+        payment_method: paymentMethod,
+        payment_status: paymentStatus,
+        special_requests: specialRequests,
+        created_at: createdAt,
+        updated_at: updatedAt,
+        room_name: room.name,
+        hotel_name: room.hotel.name,
+        city: room.hotel.city,
+        user_name: user?.name || null,
+        user_email: user?.email || null,
+      };
+    });
 
     return {
       bookings: mapped,

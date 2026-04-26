@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FaMapMarkerAlt, FaStar, FaArrowRight } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaStar, FaArrowRight, FaShieldAlt, FaBolt, FaTag, FaHotel } from 'react-icons/fa'
 import SearchBar from '../components/SearchBar'
 import HotelCard from '../components/HotelCard'
 import api from '../services/api'
@@ -24,18 +24,23 @@ export default function Home() {
 
   return (
     <div className="home">
-      {/* Hero Section */}
+      {/* Hero Section - Trivago style */}
       <section className="hero">
         <div className="container">
           <div className="hero-content">
-            <h1>Tìm kiếm khách sạn <span>hoàn hảo</span> cho chuyến đi của bạn</h1>
-            <p>Khám phá hàng ngàn khách sạn tại các thành phố du lịch nổi tiếng Việt Nam</p>
+            <h1>Tiết kiệm đến <span className="highlight">60%</span> cho đặt phòng khách sạn</h1>
+            <p className="hero-sub">Chúng tôi so sánh giá phòng từ nhiều trang</p>
           </div>
           <SearchBar />
+          <div className="hero-badges">
+            <span className="hero-badge">✓ Miễn phí Đổi/Hủy</span>
+            <span className="hero-badge">✓ Giá tốt nhất</span>
+            <span className="hero-badge">✓ Xác nhận tức thì</span>
+          </div>
         </div>
       </section>
 
-      {/* Top Destinations */}
+      {/* Popular Destinations */}
       <section className="section">
         <div className="container">
           <div className="section-header">
@@ -45,11 +50,14 @@ export default function Home() {
           <div className="city-grid">
             {cities.slice(0, 6).map(c => (
               <Link to={`/search?city=${encodeURIComponent(c.city)}`} key={c.city} className="city-card">
-                <FaMapMarkerAlt />
-                <div>
+                <div className="city-card-icon">
+                  <FaMapMarkerAlt />
+                </div>
+                <div className="city-card-info">
                   <strong>{c.city}</strong>
                   <span>{c.hotel_count} khách sạn</span>
                 </div>
+                <FaArrowRight className="city-card-arrow" />
               </Link>
             ))}
           </div>
@@ -57,7 +65,7 @@ export default function Home() {
       </section>
 
       {/* Featured Hotels */}
-      <section className="section">
+      <section className="section section-featured">
         <div className="container">
           <div className="section-header">
             <h2>Khách sạn nổi bật</h2>
@@ -66,7 +74,7 @@ export default function Home() {
           {loading ? (
             <div className="loading"><div className="spinner"></div></div>
           ) : (
-            <div className="grid-3">
+            <div className="hotel-grid">
               {featuredHotels.map(hotel => (
                 <HotelCard key={hotel.id} hotel={hotel} />
               ))}
@@ -75,28 +83,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Why Choose Us - Trivago style */}
       <section className="section why-section">
         <div className="container">
           <h2 className="text-center">Tại sao chọn StayBooker?</h2>
           <div className="why-grid">
             <div className="why-card">
-              <div className="why-icon">🏨</div>
+              <div className="why-icon why-icon-blue"><FaHotel /></div>
               <h3>Đa dạng lựa chọn</h3>
               <p>Hàng trăm khách sạn từ bình dân đến cao cấp trên khắp Việt Nam</p>
             </div>
             <div className="why-card">
-              <div className="why-icon">💰</div>
+              <div className="why-icon why-icon-green"><FaTag /></div>
               <h3>Giá tốt nhất</h3>
               <p>Cam kết giá tốt nhất thị trường, nhiều ưu đãi hấp dẫn</p>
             </div>
             <div className="why-card">
-              <div className="why-icon">⚡</div>
+              <div className="why-icon why-icon-orange"><FaBolt /></div>
               <h3>Đặt phòng nhanh</h3>
               <p>Quy trình đặt phòng đơn giản, xác nhận tức thì</p>
             </div>
             <div className="why-card">
-              <div className="why-icon">🛡️</div>
+              <div className="why-icon why-icon-purple"><FaShieldAlt /></div>
               <h3>An toàn & bảo mật</h3>
               <p>Thông tin cá nhân được bảo mật, thanh toán an toàn</p>
             </div>

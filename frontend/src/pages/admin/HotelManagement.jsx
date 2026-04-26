@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { FaPlus, FaEdit, FaTrash, FaStar, FaSearch } from 'react-icons/fa'
+import { useState, useEffect, useRef } from 'react'
+import { FaPlus, FaEdit, FaTrash, FaStar, FaSearch, FaCloudUploadAlt, FaTimes } from 'react-icons/fa'
 import AdminSidebar from '../../components/AdminSidebar'
 import api from '../../services/api'
 import './Admin.css'
@@ -7,8 +7,12 @@ import './Admin.css'
 export default function HotelManagement() {
   const [hotels, setHotels] = useState([])
   const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
+  const fileInputRef = useRef(null)
   const [form, setForm] = useState({
     name: '', description: '', address: '', city: '', star_rating: 3,
     phone: '', email: '', is_featured: false, image_url: ''
@@ -27,6 +31,8 @@ export default function HotelManagement() {
   const openCreate = () => {
     setEditing(null)
     setForm({ name: '', description: '', address: '', city: '', star_rating: 3, phone: '', email: '', is_featured: false, image_url: '' })
+    setImageFile(null)
+    setImagePreview('')
     setShowModal(true)
   }
 
@@ -37,21 +43,58 @@ export default function HotelManagement() {
       city: hotel.city, star_rating: hotel.star_rating, phone: hotel.phone || '',
       email: hotel.email || '', is_featured: hotel.is_featured, image_url: hotel.image_url || ''
     })
+    setImageFile(null)
+    setImagePreview(hotel.image_url || '')
     setShowModal(true)
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
+
+  const removeImage = () => {
+    setImageFile(null)
+    setImagePreview(editing?.image_url || '')
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setSubmitting(true)
     try {
+      const formData = new FormData()
+      formData.append('name', form.name)
+      formData.append('description', form.description)
+      formData.append('address', form.address)
+      formData.append('city', form.city)
+      formData.append('star_rating', form.star_rating)
+      formData.append('phone', form.phone)
+      formData.append('email', form.email)
+      formData.append('is_featured', form.is_featured)
+      if (imageFile) {
+        formData.append('image', imageFile)
+      } else if (form.image_url) {
+        formData.append('image_url', form.image_url)
+      }
+
       if (editing) {
-        await api.put(`/admin/hotels/${editing.id}`, form)
+        await api.put(`/admin/hotels/${editing.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
       } else {
-        await api.post('/admin/hotels', form)
+        await api.post('/admin/hotels', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
       }
       setShowModal(false)
       fetchHotels()
     } catch (err) {
       alert(err.response?.data?.message || 'Lỗi')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -152,9 +195,36 @@ export default function HotelManagement() {
                       onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
                   </div>
                   <div className="form-group">
-                    <label>URL hình ảnh</label>
-                    <input className="form-control" value={form.image_url}
-                      onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
+                    <label>Hình ảnh</label>
+                    <div className="image-upload-area">
+                      {imagePreview ? (
+                        <div className="image-preview-container">
+                          <img src={imagePreview} alt="Preview" className="image-preview" />
+                          <button type="button" className="image-remove-btn" onClick={removeImage}>
+                            <FaTimes />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="image-upload-placeholder" onClick={() => fileInputRef.current?.click()}>
+                          <FaCloudUploadAlt className="upload-icon" />
+                          <span>Nhấn để chọn ảnh</span>
+                          <small>JPEG, PNG, WebP - Tối đa 5MB</small>
+                        </div>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif,image/webp"
+                        onChange={handleImageChange}
+                        style={{ display: 'none' }}
+                      />
+                      {imagePreview && (
+                        <button type="button" className="btn btn-secondary btn-sm" style={{ marginTop: 8 }}
+                          onClick={() => fileInputRef.current?.click()}>
+                          Đổi ảnh
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="form-row">
                     <div className="form-group">
@@ -176,7 +246,9 @@ export default function HotelManagement() {
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Hủy</button>
-                  <button type="submit" className="btn btn-primary">{editing ? 'Cập nhật' : 'Thêm'}</button>
+                  <button type="submit" className="btn btn-primary" disabled={submitting}>
+                    {submitting ? 'Đang tải lên...' : (editing ? 'Cập nhật' : 'Thêm')}
+                  </button>
                 </div>
               </form>
             </div>

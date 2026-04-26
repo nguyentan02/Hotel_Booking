@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
+import { useState, useEffect, useRef } from 'react'
+import { FaPlus, FaEdit, FaTrash, FaCloudUploadAlt, FaTimes } from 'react-icons/fa'
 import AdminSidebar from '../../components/AdminSidebar'
 import api from '../../services/api'
 import './Admin.css'
@@ -8,9 +8,13 @@ export default function RoomManagement() {
   const [rooms, setRooms] = useState([])
   const [hotels, setHotels] = useState([])
   const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
   const [selectedHotel, setSelectedHotel] = useState('')
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
+  const fileInputRef = useRef(null)
   const [form, setForm] = useState({
     hotel_id: '', name: '', description: '', price: '', capacity: 2,
     total_rooms: 1, status: 'available', image_url: ''
@@ -43,6 +47,8 @@ export default function RoomManagement() {
   const openCreate = () => {
     setEditing(null)
     setForm({ hotel_id: selectedHotel, name: '', description: '', price: '', capacity: 2, total_rooms: 1, status: 'available', image_url: '' })
+    setImageFile(null)
+    setImagePreview('')
     setShowModal(true)
   }
 
@@ -53,21 +59,57 @@ export default function RoomManagement() {
       price: room.price, capacity: room.capacity, total_rooms: room.total_rooms,
       status: room.status, image_url: room.image_url || ''
     })
+    setImageFile(null)
+    setImagePreview(room.image_url || '')
     setShowModal(true)
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
+
+  const removeImage = () => {
+    setImageFile(null)
+    setImagePreview(editing?.image_url || '')
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setSubmitting(true)
     try {
+      const formData = new FormData()
+      formData.append('hotel_id', form.hotel_id)
+      formData.append('name', form.name)
+      formData.append('description', form.description)
+      formData.append('price', form.price)
+      formData.append('capacity', form.capacity)
+      formData.append('total_rooms', form.total_rooms)
+      formData.append('status', form.status)
+      if (imageFile) {
+        formData.append('image', imageFile)
+      } else if (form.image_url) {
+        formData.append('image_url', form.image_url)
+      }
+
       if (editing) {
-        await api.put(`/admin/rooms/${editing.id}`, form)
+        await api.put(`/admin/rooms/${editing.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
       } else {
-        await api.post('/admin/rooms', form)
+        await api.post('/admin/rooms', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
       }
       setShowModal(false)
       fetchRooms()
     } catch (err) {
       alert(err.response?.data?.message || 'Lỗi')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -200,14 +242,43 @@ export default function RoomManagement() {
                     </div>
                   </div>
                   <div className="form-group">
-                    <label>URL hình ảnh</label>
-                    <input className="form-control" value={form.image_url}
-                      onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
+                    <label>Hình ảnh</label>
+                    <div className="image-upload-area">
+                      {imagePreview ? (
+                        <div className="image-preview-container">
+                          <img src={imagePreview} alt="Preview" className="image-preview" />
+                          <button type="button" className="image-remove-btn" onClick={removeImage}>
+                            <FaTimes />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="image-upload-placeholder" onClick={() => fileInputRef.current?.click()}>
+                          <FaCloudUploadAlt className="upload-icon" />
+                          <span>Nhấn để chọn ảnh</span>
+                          <small>JPEG, PNG, WebP - Tối đa 5MB</small>
+                        </div>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif,image/webp"
+                        onChange={handleImageChange}
+                        style={{ display: 'none' }}
+                      />
+                      {imagePreview && (
+                        <button type="button" className="btn btn-secondary btn-sm" style={{ marginTop: 8 }}
+                          onClick={() => fileInputRef.current?.click()}>
+                          Đổi ảnh
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Hủy</button>
-                  <button type="submit" className="btn btn-primary">{editing ? 'Cập nhật' : 'Thêm'}</button>
+                  <button type="submit" className="btn btn-primary" disabled={submitting}>
+                    {submitting ? 'Đang tải lên...' : (editing ? 'Cập nhật' : 'Thêm')}
+                  </button>
                 </div>
               </form>
             </div>

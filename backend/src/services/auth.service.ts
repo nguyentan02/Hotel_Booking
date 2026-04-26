@@ -48,7 +48,7 @@ export class AuthService {
 
   async updateProfile(userId: number, data: { name: string; phone?: string | null }) {
     const user = await userRepository.updateProfile(userId, data);
-    return { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, avatarUrl: user.avatarUrl };
+    return { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, avatar_url: user.avatarUrl };
   }
 
   async changePassword(userId: number, input: ChangePasswordInput) {

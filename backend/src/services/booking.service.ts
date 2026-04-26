@@ -38,10 +38,31 @@ export class BookingService {
     return bookingRepository.findByIdFull(booking.id);
   }
 
+  private mapBooking(b: any) {
+    const { userId, roomId, checkIn, checkOut, numRooms, totalPrice, guestName, guestEmail, guestPhone, paymentMethod, paymentStatus, specialRequests, createdAt, updatedAt, room, user, ...rest } = b;
+    return {
+      ...rest,
+      user_id: userId,
+      room_id: roomId,
+      check_in: checkIn,
+      check_out: checkOut,
+      num_rooms: numRooms,
+      total_price: Number(totalPrice),
+      guest_name: guestName,
+      guest_email: guestEmail,
+      guest_phone: guestPhone,
+      payment_method: paymentMethod,
+      payment_status: paymentStatus,
+      special_requests: specialRequests,
+      created_at: createdAt,
+      updated_at: updatedAt,
+    };
+  }
+
   async getMyBookings(userId: number, status?: string) {
     const bookings = await bookingRepository.findByUser(userId, status);
     return bookings.map((b) => ({
-      ...b,
+      ...this.mapBooking(b),
       room_name: b.room.name,
       room_image: b.room.imageUrl,
       price: b.room.price,
@@ -58,7 +79,7 @@ export class BookingService {
     if (role !== 'admin' && booking.userId !== userId) throw new AppError('Không có quyền', 403);
 
     return {
-      ...booking,
+      ...this.mapBooking(booking),
       room_name: booking.room.name,
       room_image: booking.room.imageUrl,
       price: booking.room.price,
