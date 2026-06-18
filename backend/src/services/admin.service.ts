@@ -4,6 +4,7 @@ import { bookingRepository } from '../repositories/booking.repository';
 import { userRepository } from '../repositories/user.repository';
 import { AppError } from '../utils/appError';
 import { uploadToCloudinary } from '../utils/upload';
+import bcrypt from 'bcryptjs';
 
 export class AdminService {
   // ===== HOTELS =====
@@ -162,8 +163,27 @@ export class AdminService {
     return userRepository.findAll();
   }
 
+  async getUserDetail(id: number) {
+    const user = await userRepository.findByIdForAdmin(id);
+    if (!user) throw new AppError('Không tìm thấy người dùng', 404);
+    return user;
+  }
+
   async updateUserRole(id: number, role: string) {
+    const validRoles = ['customer', 'admin'];
+    if (!validRoles.includes(role)) throw new AppError('Vai trò không hợp lệ', 400);
     await userRepository.updateRole(id, role);
+  }
+
+  async toggleUserActive(id: number, currentUserId: number, isActive: boolean) {
+    if (id === currentUserId) throw new AppError('Không thể khóa chính mình', 400);
+    await userRepository.toggleActive(id, isActive);
+  }
+
+  async resetUserPassword(id: number, newPassword: string) {
+    if (!newPassword || newPassword.length < 6) throw new AppError('Mật khẩu phải có ít nhất 6 ký tự', 400);
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await userRepository.adminResetPassword(id, hashed);
   }
 
   async deleteUser(id: number, currentUserId: number) {

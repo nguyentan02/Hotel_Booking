@@ -33,7 +33,7 @@ export class UserRepository {
 
   async findAll() {
     const users = await prisma.user.findMany({
-      select: { id: true, name: true, email: true, phone: true, role: true, createdAt: true },
+      select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, avatarUrl: true, createdAt: true },
       orderBy: { createdAt: 'desc' },
     });
     return users.map((u) => ({
@@ -42,8 +42,37 @@ export class UserRepository {
       email: u.email,
       phone: u.phone,
       role: u.role,
+      is_active: u.isActive,
+      avatar_url: u.avatarUrl,
       created_at: u.createdAt,
     }));
+  }
+
+  async findByIdForAdmin(id: number) {
+    const u = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, name: true, email: true, phone: true, role: true, isActive: true, avatarUrl: true, createdAt: true, updatedAt: true },
+    });
+    if (!u) return null;
+    return {
+      id: u.id,
+      full_name: u.name,
+      email: u.email,
+      phone: u.phone,
+      role: u.role,
+      is_active: u.isActive,
+      avatar_url: u.avatarUrl,
+      created_at: u.createdAt,
+      updated_at: u.updatedAt,
+    };
+  }
+
+  async toggleActive(id: number, isActive: boolean) {
+    return prisma.user.update({ where: { id }, data: { isActive } });
+  }
+
+  async adminResetPassword(id: number, hashedPassword: string) {
+    return prisma.user.update({ where: { id }, data: { password: hashedPassword } });
   }
 
   async updateRole(id: number, role: string) {

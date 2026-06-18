@@ -71,10 +71,32 @@ export class AdminController {
     } catch (err) { next(err); }
   }
 
+  async getUserDetail(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const user = await adminService.getUserDetail(parseInt(req.params.id as string));
+      res.json(user);
+    } catch (err) { next(err); }
+  }
+
   async updateUserRole(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       await adminService.updateUserRole(parseInt(req.params.id as string), req.body.role);
       res.json({ message: 'Cập nhật quyền thành công' });
+    } catch (err) { next(err); }
+  }
+
+  async toggleUserActive(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const isActive = req.body.is_active as boolean;
+      await adminService.toggleUserActive(parseInt(req.params.id as string), req.user!.id, isActive);
+      res.json({ message: isActive ? 'Mở khóa tài khoản thành công' : 'Khóa tài khoản thành công' });
+    } catch (err) { next(err); }
+  }
+
+  async resetUserPassword(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      await adminService.resetUserPassword(parseInt(req.params.id as string), req.body.new_password);
+      res.json({ message: 'Đặt lại mật khẩu thành công' });
     } catch (err) { next(err); }
   }
 

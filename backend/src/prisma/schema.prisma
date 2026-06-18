@@ -14,6 +14,7 @@ model User {
   password   String    @db.NVarChar(255)
   phone      String?   @db.NVarChar(20)
   role       String    @default("customer") @db.NVarChar(20)
+  isActive   Boolean   @default(true) @map("is_active")
   avatarUrl  String?   @map("avatar_url") @db.NVarChar(500)
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")

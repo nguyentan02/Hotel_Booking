@@ -27,7 +27,10 @@ router.put('/bookings/:id', (req, res, next) => adminController.updateBookingSta
 
 // Người dùng
 router.get('/users', (req, res, next) => adminController.getAllUsers(req, res, next));
-router.put('/users/:id', (req, res, next) => adminController.updateUserRole(req, res, next));
+router.get('/users/:id', (req, res, next) => adminController.getUserDetail(req, res, next));
+router.put('/users/:id/role', (req, res, next) => adminController.updateUserRole(req, res, next));
+router.put('/users/:id/toggle-active', (req, res, next) => adminController.toggleUserActive(req, res, next));
+router.put('/users/:id/reset-password', (req, res, next) => adminController.resetUserPassword(req, res, next));
 router.delete('/users/:id', (req, res, next) => adminController.deleteUser(req, res, next));
 
 export default router;
