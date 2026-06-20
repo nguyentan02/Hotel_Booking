@@ -20,6 +20,7 @@ CREATE TABLE users (
   password NVARCHAR(255) NOT NULL,
   phone NVARCHAR(20),
   role NVARCHAR(20) DEFAULT 'customer' CHECK (role IN ('customer', 'admin')),
+  is_active BIT DEFAULT 1 NOT NULL,
   avatar_url NVARCHAR(500),
   created_at DATETIME2 DEFAULT GETDATE(),
   updated_at DATETIME2 DEFAULT GETDATE()

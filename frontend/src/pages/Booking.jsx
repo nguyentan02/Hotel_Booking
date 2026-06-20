@@ -87,11 +87,11 @@ export default function Booking() {
             <h1>Đặt phòng thành công!</h1>
             <p>Mã đặt phòng: <strong>#{success.id}</strong></p>
             <div className="success-details">
-              <p><strong>Khách sạn:</strong> {success.hotel_name}</p>
-              <p><strong>Phòng:</strong> {success.room_name}</p>
-              <p><strong>Nhận phòng:</strong> {new Date(success.check_in).toLocaleDateString('vi-VN')}</p>
-              <p><strong>Trả phòng:</strong> {new Date(success.check_out).toLocaleDateString('vi-VN')}</p>
-              <p><strong>Tổng tiền:</strong> {formatPrice(success.total_price)}</p>
+              <p><strong>Khách sạn:</strong> {success.hotel_name || success.room?.hotel?.name}</p>
+              <p><strong>Phòng:</strong> {success.room_name || success.room?.name}</p>
+              <p><strong>Nhận phòng:</strong> {new Date(success.check_in || success.checkIn).toLocaleDateString('vi-VN')}</p>
+              <p><strong>Trả phòng:</strong> {new Date(success.check_out || success.checkOut).toLocaleDateString('vi-VN')}</p>
+              <p><strong>Tổng tiền:</strong> {formatPrice(success.total_price || success.totalPrice)}</p>
             </div>
             <div className="success-actions">
               {user && (
