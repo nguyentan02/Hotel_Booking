@@ -35,7 +35,21 @@ export class BookingService {
       specialRequests: special_requests || null,
     });
 
-    return bookingRepository.findByIdFull(booking.id);
+    const fullBooking = await bookingRepository.findByIdFull(booking.id);
+    if (!fullBooking) throw new AppError('Không tìm thấy đặt phòng sau khi tạo', 500);
+
+    return {
+      ...this.mapBooking(fullBooking),
+      room_name: fullBooking.room.name,
+      room_image: fullBooking.room.imageUrl,
+      price: fullBooking.room.price,
+      hotel_name: fullBooking.room.hotel.name,
+      hotel_id: fullBooking.room.hotel.id,
+      city: fullBooking.room.hotel.city,
+      address: fullBooking.room.hotel.address,
+      hotel_phone: fullBooking.room.hotel.phone,
+      hotel_image: fullBooking.room.hotel.imageUrl,
+    };
   }
 
   private mapBooking(b: any) {

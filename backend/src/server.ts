@@ -9,3 +9,4 @@ const PORT = env.PORT;
 app.listen(PORT, () => {
   console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
+// Trigger reload after database schema update
